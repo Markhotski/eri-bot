@@ -12,6 +12,7 @@ RUN apt-get update && apt-get install -y \
 COPY requirements.txt .
 
 # Install Python dependencies
+RUN pip install --upgrade pip
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy application code
@@ -23,4 +24,4 @@ RUN chown -R eribot:eribot /app
 USER eribot
 
 # Command to run the application
-CMD ["python", "main.py"]
+CMD ["python", "simple_bot.py"]

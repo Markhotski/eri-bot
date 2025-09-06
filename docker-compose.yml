@@ -11,7 +11,9 @@ services:
       - ./data:/app/data
       - ./logs:/app/logs
     environment:
-      - DATA_FILE=/app/data/last_check_data.json
+      - PYTHONUNBUFFERED=1
+      # Add proxy settings if needed
+      # - HTTPS_PROXY=http://your-proxy:port
     logging:
       driver: "json-file"
       options:
