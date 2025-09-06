@@ -24,24 +24,24 @@ class AbandonedObjectsAPI:
             List of abandoned objects or None if error occurred
         """
         try:
-                   headers = {
-                       'Content-Type': 'application/json',
-                       'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-                       'Accept': 'application/json, text/plain, */*',
-                       'Accept-Language': 'ru-RU,ru;q=0.9,en;q=0.8',
-                       'Accept-Encoding': 'gzip, deflate, br',
-                       'Origin': 'https://eri2.nca.by',
-                       'Referer': 'https://eri2.nca.by/',
-                       'Sec-Ch-Ua': '"Not_A Brand";v="8", "Chromium";v="120", "Google Chrome";v="120"',
-                       'Sec-Ch-Ua-Mobile': '?0',
-                       'Sec-Ch-Ua-Platform': '"Windows"',
-                       'Sec-Fetch-Dest': 'empty',
-                       'Sec-Fetch-Mode': 'cors',
-                       'Sec-Fetch-Site': 'same-origin',
-                       'DNT': '1',
-                       'Cache-Control': 'no-cache',
-                       'Pragma': 'no-cache'
-                   }
+            headers = {
+                'Content-Type': 'application/json',
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+                'Accept': 'application/json, text/plain, */*',
+                'Accept-Language': 'ru-RU,ru;q=0.9,en;q=0.8',
+                'Accept-Encoding': 'gzip, deflate, br',
+                'Origin': 'https://eri2.nca.by',
+                'Referer': 'https://eri2.nca.by/',
+                'Sec-Ch-Ua': '"Not_A Brand";v="8", "Chromium";v="120", "Google Chrome";v="120"',
+                'Sec-Ch-Ua-Mobile': '?0',
+                'Sec-Ch-Ua-Platform': '"Windows"',
+                'Sec-Fetch-Dest': 'empty',
+                'Sec-Fetch-Mode': 'cors',
+                'Sec-Fetch-Site': 'same-origin',
+                'DNT': '1',
+                'Cache-Control': 'no-cache',
+                'Pragma': 'no-cache'
+            }
             
             # Convert payload to JSON string with proper formatting
             json_payload = json.dumps(self.payload)
