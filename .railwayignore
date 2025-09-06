@@ -1,7 +1,5 @@
 # Ignore files for Railway deployment
-Dockerfile*
-docker-compose.yml
-.dockerignore
+docker-configs/
 
 # Git
 .git/

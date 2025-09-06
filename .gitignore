@@ -41,5 +41,5 @@ Thumbs.db
 eri_bot.log*
 last_check_data.json
 
-# Docker (use Dockerfile.backup for local development)
-Dockerfile.backup
+# Docker configs moved to docker-configs/
+# (use docker-configs/Dockerfile.backup for local development)
