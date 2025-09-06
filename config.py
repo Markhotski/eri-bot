@@ -12,11 +12,15 @@ API_URL = os.getenv('API_URL', 'https://eri2.nca.by/api/guest/abandonedObject/se
 VIEW_URL_BASE = os.getenv('VIEW_URL_BASE', 'https://eri2.nca.by/api/guest/abandonedObject')
 CHECK_INTERVAL_HOURS = int(os.getenv('CHECK_INTERVAL_HOURS', 1))
 
+# Proxy Configuration (optional)
+HTTP_PROXY = os.getenv('HTTP_PROXY')
+HTTPS_PROXY = os.getenv('HTTPS_PROXY')
+
 # Search payload for the API with specific filters
 # Searches for objects in specific region (ateId: 19824) with other criteria
 # Returns empty list [] if no objects match the search criteria
 SEARCH_PAYLOAD = {
-    "pageSize": 10,
+    "pageSize": 5,
     "pageNumber": 0,
     "sortBy": 1,
     "sortDesc": True,
