@@ -3,3 +3,6 @@ cmd = "python simple_bot.py"
 
 [variables]
 PYTHONUNBUFFERED = "1"
+
+[phases.install]
+cmds = ["pip install --upgrade pip", "pip install -r requirements.txt"]

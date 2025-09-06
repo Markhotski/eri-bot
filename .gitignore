@@ -40,3 +40,6 @@ Thumbs.db
 # Project specific
 eri_bot.log*
 last_check_data.json
+
+# Docker (use Dockerfile.backup for local development)
+Dockerfile.backup
