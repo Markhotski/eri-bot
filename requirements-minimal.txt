@@ -1,3 +1,0 @@
-# Minimal requirements for Railway
-requests==2.28.2
-python-dotenv==0.21.0

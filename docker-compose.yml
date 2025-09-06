@@ -8,8 +8,8 @@ services:
     env_file:
       - .env
     volumes:
-      - ./data:/app/data
-      - ./logs:/app/logs
+      - ./eri_bot.log:/app/eri_bot.log
+      - ./last_check_data.json:/app/last_check_data.json
     environment:
       - PYTHONUNBUFFERED=1
       # Add proxy settings if needed

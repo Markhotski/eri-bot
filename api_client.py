@@ -1,8 +1,7 @@
 import requests
 import json
 import logging
-import time
-import random
+# time and random imports removed - no delays needed
 from typing import List, Dict, Optional
 from config import API_URL, VIEW_URL_BASE, SEARCH_PAYLOAD, HTTP_PROXY, HTTPS_PROXY
 
@@ -28,10 +27,7 @@ class AbandonedObjectsAPI:
             List of abandoned objects or None if error occurred
         """
         try:
-            # Add random delay to avoid being detected as bot
-            delay = random.uniform(1, 3)
-            logger.info(f"Adding {delay:.1f}s delay before API request")
-            time.sleep(delay)
+            # No delay - removed as requested
             headers = {
                 'Content-Type': 'application/json',
                 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',

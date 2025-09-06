@@ -369,7 +369,7 @@ class SimpleEriBot:
         test_result = self.api_client.fetch_abandoned_objects()
         if test_result is None:
             error_msg = (
-                "⚠️ Внимание: API недоступен с серверов Railway\n\n"
+                "⚠️ Внимание: API недоступен\n\n"
                 "Возможные причины:\n"
                 "• Геоблокировка (сервер не в Беларуси)\n"
                 "• Защита от ботов\n"

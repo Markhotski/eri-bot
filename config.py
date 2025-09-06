@@ -20,7 +20,7 @@ HTTPS_PROXY = os.getenv('HTTPS_PROXY')
 # Searches for objects in specific region (ateId: 19824) with other criteria
 # Returns empty list [] if no objects match the search criteria
 SEARCH_PAYLOAD = {
-    "pageSize": 5,
+    "pageSize": 10,
     "pageNumber": 0,
     "sortBy": 1,
     "sortDesc": True,

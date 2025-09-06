@@ -1,5 +1,0 @@
-[start]
-cmd = "python simple_bot.py"
-
-[variables]
-PYTHONUNBUFFERED = "1"
