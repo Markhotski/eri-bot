@@ -84,7 +84,8 @@ class SimpleEriBot:
                 'disable_web_page_preview': True
             }
             
-            response = requests.post(url, json=data, timeout=30)
+            # Don't use proxy for Telegram API
+            response = requests.post(url, json=data, timeout=30, proxies={})
             
             if response.status_code == 200:
                 logger.info("Message sent successfully")
@@ -101,7 +102,8 @@ class SimpleEriBot:
         """Test Telegram bot connection"""
         try:
             url = f"https://api.telegram.org/bot{self.token}/getMe"
-            response = requests.get(url, timeout=10)
+            # Don't use proxy for Telegram API
+            response = requests.get(url, timeout=10, proxies={})
             
             if response.status_code == 200:
                 data = response.json()
@@ -128,7 +130,8 @@ class SimpleEriBot:
                 'limit': 10  # Limit number of updates
             }
             
-            response = requests.get(url, params=params, timeout=10)
+            # Don't use proxy for Telegram API
+            response = requests.get(url, params=params, timeout=10, proxies={})
             if response.status_code == 200:
                 data = response.json()
                 if data.get('ok') and data.get('result'):
@@ -317,8 +320,8 @@ class SimpleEriBot:
             logger.info("Clearing all pending messages...")
             url = f"https://api.telegram.org/bot{self.token}/getUpdates"
             
-            # Get all pending updates
-            response = requests.get(url, timeout=10)
+            # Get all pending updates (don't use proxy)
+            response = requests.get(url, timeout=10, proxies={})
             if response.status_code == 200:
                 data = response.json()
                 if data.get('ok') and data.get('result'):
@@ -328,11 +331,12 @@ class SimpleEriBot:
                         last_id = updates[-1]['update_id']
                         logger.info(f"Found {len(updates)} pending updates, clearing them...")
                         
-                        # Clear all pending updates
+                        # Clear all pending updates (don't use proxy)
                         clear_response = requests.get(
                             url, 
                             params={'offset': last_id + 1}, 
-                            timeout=10
+                            timeout=10,
+                            proxies={}
                         )
                         
                         self.last_update_id = last_id
