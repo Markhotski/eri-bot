@@ -349,6 +349,20 @@ class SimpleEriBot:
         # Initial check
         await self.check_and_notify()
         
+        # Check if API is accessible
+        test_result = self.api_client.fetch_abandoned_objects()
+        if test_result is None:
+            error_msg = (
+                "⚠️ Внимание: API недоступен с серверов Railway\n\n"
+                "Возможные причины:\n"
+                "• Геоблокировка (сервер не в Беларуси)\n"
+                "• Защита от ботов\n"
+                "• Изменения в API\n\n"
+                "Бот продолжит попытки подключения каждый час.\n"
+                "Используйте /check для ручной проверки."
+            )
+            await self.send_message(error_msg)
+        
         last_check_time = datetime.now()
         
         while True:

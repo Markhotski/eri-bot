@@ -1,6 +1,8 @@
 import requests
 import json
 import logging
+import time
+import random
 from typing import List, Dict, Optional
 from config import API_URL, VIEW_URL_BASE, SEARCH_PAYLOAD, HTTP_PROXY, HTTPS_PROXY
 
@@ -15,6 +17,8 @@ class AbandonedObjectsAPI:
         self.view_url_base = VIEW_URL_BASE
         # Use configured search payload
         self.payload = SEARCH_PAYLOAD.copy()
+        # Create session for connection reuse
+        self.session = requests.Session()
     
     def fetch_abandoned_objects(self) -> Optional[List[Dict]]:
         """
@@ -24,6 +28,10 @@ class AbandonedObjectsAPI:
             List of abandoned objects or None if error occurred
         """
         try:
+            # Add random delay to avoid being detected as bot
+            delay = random.uniform(1, 3)
+            logger.info(f"Adding {delay:.1f}s delay before API request")
+            time.sleep(delay)
             headers = {
                 'Content-Type': 'application/json',
                 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
@@ -57,7 +65,7 @@ class AbandonedObjectsAPI:
             if proxies:
                 logger.info(f"Using proxies: {proxies}")
 
-            response = requests.post(
+            response = self.session.post(
                 self.api_url,
                 data=json_payload,
                 headers=headers,
