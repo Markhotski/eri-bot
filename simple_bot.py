@@ -8,6 +8,7 @@ import logging
 import sys
 import requests
 import json
+import os
 from datetime import datetime, timedelta
 from logging.handlers import RotatingFileHandler
 
@@ -66,6 +67,18 @@ class SimpleEriBot:
         self.last_check_time = None  # Track last check time for status
         self.last_check_result = None  # Track last check result for status
         
+        # Create separate session for Telegram API without proxy
+        self.telegram_session = requests.Session()
+        # Explicitly disable proxy for Telegram session
+        self.telegram_session.proxies = {}
+        
+        # Log proxy configuration
+        http_proxy = os.getenv('HTTP_PROXY')
+        https_proxy = os.getenv('HTTPS_PROXY')
+        if http_proxy or https_proxy:
+            logger.info(f"Global proxy detected - HTTP: {http_proxy}, HTTPS: {https_proxy}")
+            logger.info("Telegram API will bypass proxy, eri2.nca.by API will use proxy")
+        
         if not self.token or not self.chat_id:
             raise ValueError("TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID must be set")
         
@@ -84,8 +97,8 @@ class SimpleEriBot:
                 'disable_web_page_preview': True
             }
             
-            # Don't use proxy for Telegram API
-            response = requests.post(url, json=data, timeout=30, proxies={})
+            # Use session without proxy for Telegram API
+            response = self.telegram_session.post(url, json=data, timeout=30)
             
             if response.status_code == 200:
                 logger.info("Message sent successfully")
@@ -102,8 +115,8 @@ class SimpleEriBot:
         """Test Telegram bot connection"""
         try:
             url = f"https://api.telegram.org/bot{self.token}/getMe"
-            # Don't use proxy for Telegram API
-            response = requests.get(url, timeout=10, proxies={})
+            # Use session without proxy for Telegram API
+            response = self.telegram_session.get(url, timeout=10)
             
             if response.status_code == 200:
                 data = response.json()
@@ -130,8 +143,8 @@ class SimpleEriBot:
                 'limit': 10  # Limit number of updates
             }
             
-            # Don't use proxy for Telegram API
-            response = requests.get(url, params=params, timeout=10, proxies={})
+            # Use session without proxy for Telegram API
+            response = self.telegram_session.get(url, params=params, timeout=10)
             if response.status_code == 200:
                 data = response.json()
                 if data.get('ok') and data.get('result'):
@@ -320,8 +333,8 @@ class SimpleEriBot:
             logger.info("Clearing all pending messages...")
             url = f"https://api.telegram.org/bot{self.token}/getUpdates"
             
-            # Get all pending updates (don't use proxy)
-            response = requests.get(url, timeout=10, proxies={})
+            # Get all pending updates (use Telegram session without proxy)
+            response = self.telegram_session.get(url, timeout=10)
             if response.status_code == 200:
                 data = response.json()
                 if data.get('ok') and data.get('result'):
@@ -331,12 +344,11 @@ class SimpleEriBot:
                         last_id = updates[-1]['update_id']
                         logger.info(f"Found {len(updates)} pending updates, clearing them...")
                         
-                        # Clear all pending updates (don't use proxy)
-                        clear_response = requests.get(
+                        # Clear all pending updates (use Telegram session without proxy)
+                        clear_response = self.telegram_session.get(
                             url, 
                             params={'offset': last_id + 1}, 
-                            timeout=10,
-                            proxies={}
+                            timeout=10
                         )
                         
                         self.last_update_id = last_id
