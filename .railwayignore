@@ -1,0 +1,37 @@
+# Ignore files for Railway deployment
+Dockerfile*
+docker-compose.yml
+.dockerignore
+
+# Git
+.git/
+.gitignore
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+.coverage
+
+# Logs and data (will be recreated)
+eri_bot.log*
+last_check_data.json
+data/
+logs/
+
+# Development
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Documentation
+README.md
+DEPLOY.md
+TROUBLESHOOTING.md
