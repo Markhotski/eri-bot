@@ -221,7 +221,7 @@ class SimpleEriBot:
                         # Конвертируем в минское время для отображения
                         minsk_tz = timezone(timedelta(hours=3))
                         last_update_minsk = last_update.astimezone(minsk_tz)
-                        time_str = last_update_minsk.strftime("%d.%m.%Y в %H:%M") + " (МСК+0)"
+                        time_str = last_update_minsk.strftime("%d.%m.%Y в %H:%M")
                         objects_count = update_info.get('objects_count', 0)
                         
                         status_message = (

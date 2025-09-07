@@ -37,7 +37,7 @@ class MessageFormatter:
         from datetime import timezone, timedelta
         minsk_tz = timezone(timedelta(hours=3))
         minsk_time = datetime.now(minsk_tz)
-        footer = f"\n\n🕐 Проверка выполнена: {minsk_time.strftime('%d.%m.%Y %H:%M')} (МСК+0)"
+        footer = f"\n\n🕐 Проверка выполнена: {minsk_time.strftime('%d.%m.%Y %H:%M')}"
         
         message = header + "\n\n".join(items) + footer
         
@@ -112,7 +112,7 @@ class MessageFormatter:
         from datetime import timezone, timedelta
         minsk_tz = timezone(timedelta(hours=3))
         minsk_time = datetime.now(minsk_tz)
-        footer += f"🕐 Проверка выполнена: {minsk_time.strftime('%d.%m.%Y %H:%M')} (МСК+0)"
+        footer += f"🕐 Проверка выполнена: {minsk_time.strftime('%d.%m.%Y %H:%M')}"
         
         return header + "\n\n".join(items) + footer
     
@@ -130,7 +130,7 @@ class MessageFormatter:
         minsk_tz = timezone(timedelta(hours=3))
         minsk_time = datetime.now(minsk_tz)
         timestamp = minsk_time.strftime('%d.%m.%Y %H:%M')
-        return f"❌ Ошибка при проверке объектов:\n{error}\n\n🕐 {timestamp} (МСК+0)"
+        return f"❌ Ошибка при проверке объектов:\n{error}\n\n🕐 {timestamp}"
     
     def format_status_message(self, objects_count: int, last_update: str = None) -> str:
         """
