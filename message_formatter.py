@@ -33,8 +33,11 @@ class MessageFormatter:
             item = self._format_single_object(obj, i)
             items.append(item)
         
-        # Add footer with timestamp (with empty line before it)
-        footer = f"\n\n🕐 Проверка выполнена: {datetime.now().strftime('%d.%m.%Y %H:%M')}"
+        # Add footer with timestamp in Minsk time (with empty line before it)
+        from datetime import timezone, timedelta
+        minsk_tz = timezone(timedelta(hours=3))
+        minsk_time = datetime.now(minsk_tz)
+        footer = f"\n\n🕐 Проверка выполнена: {minsk_time.strftime('%d.%m.%Y %H:%M')} (МСК+0)"
         
         message = header + "\n\n".join(items) + footer
         
@@ -106,7 +109,10 @@ class MessageFormatter:
             items.append(item)
         
         footer = f"\n\n... и еще {count - 5} объектов\n\n"
-        footer += f"🕐 Проверка выполнена: {datetime.now().strftime('%d.%m.%Y %H:%M')}"
+        from datetime import timezone, timedelta
+        minsk_tz = timezone(timedelta(hours=3))
+        minsk_time = datetime.now(minsk_tz)
+        footer += f"🕐 Проверка выполнена: {minsk_time.strftime('%d.%m.%Y %H:%M')} (МСК+0)"
         
         return header + "\n\n".join(items) + footer
     
@@ -120,8 +126,11 @@ class MessageFormatter:
         Returns:
             Formatted error message
         """
-        timestamp = datetime.now().strftime('%d.%m.%Y %H:%M')
-        return f"❌ Ошибка при проверке объектов:\n{error}\n\n🕐 {timestamp}"
+        from datetime import timezone, timedelta
+        minsk_tz = timezone(timedelta(hours=3))
+        minsk_time = datetime.now(minsk_tz)
+        timestamp = minsk_time.strftime('%d.%m.%Y %H:%M')
+        return f"❌ Ошибка при проверке объектов:\n{error}\n\n🕐 {timestamp} (МСК+0)"
     
     def format_status_message(self, objects_count: int, last_update: str = None) -> str:
         """

@@ -24,7 +24,9 @@ class DataManager:
             if os.path.exists(self.data_file):
                 with open(self.data_file, 'r', encoding='utf-8') as f:
                     data = json.load(f)
-                    return set(data.get('last_ids', []))
+                    # Поддерживаем оба формата: новый (last_checked_ids) и старый (last_ids)
+                    ids = data.get('last_checked_ids', data.get('last_ids', []))
+                    return set(ids)
             else:
                 logger.info(f"Data file {self.data_file} does not exist, starting fresh")
                 return set()
@@ -47,8 +49,9 @@ class DataManager:
         """
         try:
             data = {
-                'last_ids': list(set(object_ids)),  # Remove duplicates
-                'last_update': self._get_current_timestamp()
+                'last_checked_ids': list(set(object_ids)),  # Remove duplicates
+                'last_update': self._get_current_timestamp(),
+                'objects_count': len(set(object_ids))
             }
             
             with open(self.data_file, 'w', encoding='utf-8') as f:
@@ -92,9 +95,39 @@ class DataManager:
         return new_objects
     
     def _get_current_timestamp(self) -> str:
-        """Get current timestamp as ISO string"""
-        from datetime import datetime
-        return datetime.now().isoformat()
+        """Get current timestamp as ISO string in Minsk timezone (UTC+3)"""
+        from datetime import datetime, timezone, timedelta
+        # Минское время UTC+3
+        minsk_tz = timezone(timedelta(hours=3))
+        return datetime.now(minsk_tz).isoformat()
+    
+    def update_last_check_time(self) -> bool:
+        """
+        Update only the last check time without changing IDs
+        Used when check is performed but no new objects found
+        
+        Returns:
+            True if saved successfully, False otherwise
+        """
+        try:
+            # Load existing data
+            data = {'last_checked_ids': [], 'objects_count': 0}
+            if os.path.exists(self.data_file):
+                with open(self.data_file, 'r', encoding='utf-8') as f:
+                    data = json.load(f)
+            
+            # Update only the timestamp
+            data['last_update'] = self._get_current_timestamp()
+            
+            with open(self.data_file, 'w', encoding='utf-8') as f:
+                json.dump(data, f, ensure_ascii=False, indent=2)
+            
+            logger.info("Updated last check time")
+            return True
+            
+        except Exception as e:
+            logger.error(f"Error updating last check time: {e}")
+            return False
     
     def get_last_update_info(self) -> Dict:
         """
@@ -107,9 +140,11 @@ class DataManager:
             if os.path.exists(self.data_file):
                 with open(self.data_file, 'r', encoding='utf-8') as f:
                     data = json.load(f)
+                    # Поддерживаем оба формата
+                    ids = data.get('last_checked_ids', data.get('last_ids', []))
                     return {
                         'last_update': data.get('last_update'),
-                        'objects_count': len(data.get('last_ids', []))
+                        'objects_count': data.get('objects_count', len(ids))
                     }
             else:
                 return {'last_update': None, 'objects_count': 0}

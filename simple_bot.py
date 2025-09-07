@@ -205,21 +205,42 @@ class SimpleEriBot:
                 logger.info("Start command executed")
                 
             elif command == '/status':
-                if self.last_check_time:
-                    time_str = self.last_check_time.strftime("%d.%m.%Y в %H:%M")
-                    if self.last_check_result:
-                        result_str = f"Найдено новых объектов: {self.last_check_result}"
-                    else:
-                        result_str = "Новых объектов не найдено"
-                    
-                    status_message = (
-                        f"📊 Статус мониторинга ERI Bot\n\n"
-                        f"🕐 Последняя проверка: {time_str}\n"
-                        f"📋 Результат: {result_str}\n\n"
-                        f"🔄 Интервал проверки: каждый час\n"
-                        f"🎯 Регион: Минский район за одну базовую\n"
-                        f"✅ Мониторинг активен"
-                    )
+                # Получаем данные из файла для актуального статуса
+                update_info = self.data_manager.get_last_update_info()
+                
+                if update_info.get('last_update'):
+                    try:
+                        from datetime import datetime, timezone, timedelta
+                        last_update = datetime.fromisoformat(update_info['last_update'])
+                        
+                        # Если время не имеет timezone info, предполагаем что это минское время
+                        if last_update.tzinfo is None:
+                            minsk_tz = timezone(timedelta(hours=3))
+                            last_update = last_update.replace(tzinfo=minsk_tz)
+                        
+                        # Конвертируем в минское время для отображения
+                        minsk_tz = timezone(timedelta(hours=3))
+                        last_update_minsk = last_update.astimezone(minsk_tz)
+                        time_str = last_update_minsk.strftime("%d.%m.%Y в %H:%M") + " (МСК+0)"
+                        objects_count = update_info.get('objects_count', 0)
+                        
+                        status_message = (
+                            f"📊 Статус мониторинга ERI Bot\n\n"
+                            f"🕐 Последняя проверка: {time_str}\n"
+                            f"📋 Отслеживается объектов: {objects_count}\n\n"
+                            f"🔄 Интервал проверки: каждый час\n"
+                            f"🎯 Регион: Минский район за одну базовую\n"
+                            f"✅ Мониторинг активен"
+                        )
+                    except Exception as e:
+                        logger.error(f"Error parsing last update time: {e}")
+                        status_message = (
+                            f"📊 Статус мониторинга ERI Bot\n\n"
+                            f"🕐 Последняя проверка: данные повреждены\n"
+                            f"🔄 Интервал проверки: каждый час\n"
+                            f"🎯 Регион: Минский район за одну базовую\n"
+                            f"✅ Мониторинг активен"
+                        )
                 else:
                     status_message = (
                         f"📊 Статус мониторинга ERI Bot\n\n"
@@ -242,10 +263,16 @@ class SimpleEriBot:
                     if current_objects is None:
                         error_msg = self.formatter.format_error_message("Не удалось получить данные с API")
                         await self.send_message(error_msg)
+                        # Обновляем время последней попытки проверки даже при ошибке
+                        self.data_manager.update_last_check_time()
                         return
                     
                     # Get new objects
                     new_objects = self.data_manager.get_new_objects(current_objects)
+                    
+                    # Обновляем время последней проверки
+                    if not new_objects:
+                        self.data_manager.update_last_check_time()
                     
                     if new_objects:
                         message = self.formatter.format_new_objects_message(new_objects)
@@ -293,6 +320,8 @@ class SimpleEriBot:
             if current_objects is None:
                 error_msg = self.formatter.format_error_message("Не удалось получить данные с API")
                 await self.send_message(error_msg)
+                # Даже при ошибке обновляем время последней попытки проверки
+                self.data_manager.update_last_check_time()
                 return
             
             # Get new objects
@@ -301,6 +330,11 @@ class SimpleEriBot:
             # Update status tracking
             self.last_check_time = datetime.now()
             self.last_check_result = len(new_objects) if new_objects else 0
+            
+            # Обновляем время последней проверки в файле (это делается автоматически в get_new_objects для новых объектов)
+            if not new_objects:
+                # Если новых объектов нет, все равно обновляем время последней проверки
+                self.data_manager.update_last_check_time()
             
             if new_objects:
                 message = self.formatter.format_new_objects_message(new_objects)
