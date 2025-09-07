@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  eri-bot:
+    image: antonimarkhotski/eri-bot:latest
+    platform: linux/amd64  # Принудительно AMD64 для Windows
+    container_name: eri-bot
+    restart: unless-stopped
+    env_file:
+      - .env
+    volumes:
+      - ./eri_bot.log:/app/eri_bot.log
+      - ./last_check_data.json:/app/last_check_data.json
+    environment:
+      - PYTHONUNBUFFERED=1
+      # Add proxy settings if needed
+      # - HTTPS_PROXY=http://your-proxy:port
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
